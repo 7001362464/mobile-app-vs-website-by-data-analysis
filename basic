@@ -1,0 +1,91 @@
+import json
+from urllib.request import urlopen
+from tkinter import *
+from tkinter import messagebox
+from PIL import ImageTk, Image
+import os
+root=Tk();
+root.geometry("300x300+100+50");
+flag=0;
+
+def logok(center_frame,b):
+    
+    
+    global flag,label1,label2,label,label3
+    if(flag>0):
+        label1.destroy();
+        label2.destroy();
+        label3.destroy();
+        
+    
+    
+    f=urlopen("http://api.openweathermap.org/data/2.5/weather?q={}&APPID=" apli key".format(b.get()))
+    f1=json.load(f);
+    l=f1["main"]["temp"]-273
+    r=f1["weather"][0]["description"];
+    label3=Label(root,text="Live weather of {}".format(b.get()),fg='black',font=200);
+    label3.pack()
+    label1=Label(root,text="temparature:{} degree celcious".format(int(l)),fg='yellow',bg='blue',font=200);
+    label1.pack();
+    label2=Label(root,text="rain status:{}".format(r),fg='blue',bg='white',font=200);
+    label2.pack();
+    flag+=1
+    if(flag==1):
+      cholo(root,r);
+
+def resize_image(event):
+    new_width = event.width
+    new_height = event.height
+
+    image = copy_of_image.resize((new_width, new_height))
+    photo = ImageTk.PhotoImage(image)
+
+    label.config(image=photo)
+    label.image = photo  # avoid garbage collection
+
+
+b=StringVar(root);
+frame = Frame(root, relief='raised', borderwidth=2)
+frame.pack(fill=BOTH, expand=YES)
+frame.pack_propagate(False)
+
+copy_of_image = Image.open("rodion-kutsaev-PEm_sLmJT-w-unsplash.jpg")
+photo = ImageTk.PhotoImage(copy_of_image)
+
+label = Label(frame, image=photo)
+label.place(x=0, y=0, relwidth=1, relheight=1)
+label.bind('<Configure>', resize_image)
+
+center_frame = Frame(frame, relief='raised', borderwidth=2)
+center_frame.place(relx=0.5, rely=0.5, anchor=CENTER)
+
+
+
+Label(center_frame, text="type your location below", width=30).pack()
+Entry(root,textvariable=b).pack();
+Button(root,text='submit',fg='red',bg='yellow',command= lambda: logok(root,b)).pack();
+photo = [PhotoImage(file='dphdwep.gif',format = 'gif -index %i' %(i)) for i in range(10)]
+def cholo(root,r):
+    
+        
+    label1 = Label(root)
+    label1.pack()
+ 
+ 
+  
+    root.after(0, update, 0)
+
+def update(ind):
+        global photo
+        frame = photo[ind]
+        ind += 1
+        print(ind)
+        if ind>9: #With this condition it will play gif infinitely
+            ind = 0
+        label.configure(image=frame)
+        root.after(100, update, ind)
+
+
+root.mainloop()
+
+
